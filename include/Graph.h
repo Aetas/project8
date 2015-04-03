@@ -38,6 +38,7 @@ public:
 	void add_Edge(std::string, std::string, int);	//v1, v2, weight
 	void add_vertex(std::string);	//name
 	void display_edges();
+	void BFTraversal(std::string);
 
 protected:
 
