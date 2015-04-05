@@ -20,12 +20,27 @@
 using std::cout;
 using std::cin;
 using std::endl;
+using std::string;
 
-int main(int* argc, char* argv)
+int main(int argc, char* argv[])
 {
 	Graph* g = new Graph();
-	int select = 0;
 
+	std::ifstream in_file;
+	in_file.open(argv[1]);
+	if (!in_file.is_open())
+	{
+		//fail case handling, direct input? 
+		 
+	}
+	else
+	{
+		//do shit
+		string* cities = new string[10];
+	}
+
+	int select = 0;
+	
 	cout << "1. Print Verticies" << endl
 		<< "2. Find districts" << endl
 		<< "3. Find shortest path" << endl
