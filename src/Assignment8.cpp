@@ -48,19 +48,35 @@ int main(int argc, char* argv[])
 		<< "5. Extra credit" << endl;
 	cin >> select;
 
+	std::string origin = "";
+	std::string destination = "";
+
 	switch(select)
 	{
 	case 1:	//Print Verticies
 		//
+		g.BFTraversal();
 		break;
 	case 2:	//Find Districts
 		//
 		break;
 	case 3:	//Find Shortest Path
 		//
+		cout << "Starting City?" << endl;
+		//cin.ignore(1000, \n);
+		getline(cin, origin);
+		cout << "Ending city?" << endl;
+		getline(cin, destination);
+		g.shortest_path(origin, destination);
 		break;
 	case 4:	//Find Shortest Distance
 		//
+		cout << "Starting City?" << endl;
+		//cin.ignore(1000, \n);
+		getline(cin, origin);
+		cout << "Ending city?" << endl;
+		getline(cin, destination);
+		g.shortest_distance(origin, destination);
 		break;
 	case 5:	//Extra Credit
 		//
