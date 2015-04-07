@@ -9,7 +9,7 @@ struct Edge
 {
 	//construct/destruct
 	Edge();
-	Edge(Vertex*, int);
+	Edge(Vertex*, int&);
 	~Edge();
 
 	Vertex* v;
@@ -24,11 +24,11 @@ struct Vertex
 	~Vertex();
 
 	bool have_visited;
+	int district;
 
 	std::string name;
 	std::vector<Edge*> edge;
 };
-
 
 class Graph
 {
@@ -37,18 +37,24 @@ public:
 	Graph();
 	~Graph();
 
-	void add_Edge(std::string&, std::string&, int&);	//v1, v2, weight
-	void add_Edge(Vertex*, Vertex*, int&);
+	//by name
+	void add_edge(std::string&, std::string&, int);	//v1, v2, weight
 	void add_vertex(std::string&);	//name
-	void add_vertex(Vertex*);
-	void display_edges();
+	void print_vertices();
+	void display_edges(Vertex*);
 	void BFTraversal();
 	void BFTraversal(std::string&);
-	void BFTraversal(Vertex*);
 	void shortest_path(std::string&, std::string&);
-	void shortest_distance(Vertex*, Vertex*);			//return T, distnace?
-	void shortest_distance(std::string&, std::string&);	//^^
+	void shortest_distance(std::string&, std::string&);	//return T, distnace?
+	void assign_districts();
 
+	//from-vertex functions
+	void add_edge(Vertex*, Vertex*, int);
+	void add_vertex(Vertex*);
+	void BFTraversal(Vertex*);
+	void shortest_distance(Vertex*, Vertex*);			//return T, distnace?
+
+	//"EEEEEEZ MONEY" - Bizzaro Flame
 	void road_trip();	//extra credit search. Probably requires a lot of initial setup to reconnect the vertices after zoombies
 						//Starts from Boulder, hard code it? Only 10 vertices in alphabetical, should be fine.
 
@@ -60,7 +66,9 @@ protected:
 
 private:
 	std::vector<Vertex*> vertices;
+	Vertex* district_log[5][10];
 
+	void reset_visited();	//private because why not
 };
 
 #endif //GRAPH_H
