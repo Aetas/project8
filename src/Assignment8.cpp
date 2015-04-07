@@ -9,6 +9,8 @@
 // Instructions and specifications in writeup/Assignment8Writeup.pdf
 // Read file in doc/zombieCities.txt
 */
+#ifndef NO_OF_CITIES
+#def NO_OF_CITIES 14
 
 #include<iostream>
 #include<fstream>
@@ -36,30 +38,33 @@ int main(int argc, char* argv[])
 	else
 	{
 		//FROM FILE:
-		//0 - Boston	| 1 - Boulder
-		//2 - Chicago	| 3 - Disneyland
-		//4 - Miami		| 5 - New Orleans
-		//6 - New York	| 7 - Portland
-		//8 - San Fran.	| 9 - Seattle
+		//0  - Atlanta			| 1  - Boston
+		//2  - Boulder			| 3  - Cheyenne
+		//4  - Chicago			| 5  - Cleveland
+		//6  - Disneyland		| 7  - Key West
+		//8  - Miami			| 9  - New Orleans
+		//10 - New York			| 11 - Portland
+		//12 - San Francisco	| 13 - Seattle
+		//14 - Yakima
 		struct string_int_array
-		{ string city[10]; string edge[10]; } text_info;
+		{ string city[NO_OF_CITIES]; string edge[NO_OF_CITIES]; } text_info;
 		//originally edge was an int, but the getline hated me for it. So now I cast to int when adding edges.
 		while (!in_file.eof())
 		{
 			in_file.ignore(1000, '\n');	//ignore top line - the cities.
-			for (int i = 0; i < 10; i++)
+			for (int i = 0; i < NO_OF_CITIES; i++)
 			{
 				getline(in_file, text_info.city[i], ',');		//grab city name
-				for (int j = 0; j < 9; j++)
+				for (int j = 0; j < NO_OF_CITIES - 1; j++)
 					getline(in_file, text_info.edge[j], ',');	//grab the comma-deliminated distances
-				getline(in_file, text_info.edge[9], '\n');		//lines end in... line endings.
+				getline(in_file, text_info.edge[NO_OF_CITIES - 1], '\n');		//lines end in... line endings.
 			}
 		}
 		//now that the file has been parsed, build the graph
-		for (int i = 0; i < 10; i++)	//all 10 of them
+		for (int i = 0; i < NO_OF_CITIES; i++)	//all 10 of them
 		{
 			g->add_vertex(text_info.city[i]);	//names are in order
-			for (int j = 0; j < 10; j++)		//add edges at the same time to take advantage of the existing for loop
+			for (int j = 0; j < NO_OF_CITITES; j++)		//add edges at the same time to take advantage of the existing for loop
 			{
 				if (std::stoi(text_info.edge[j]) != -1 || std::stoi(text_info.edge[j]) != 0)		//-1 = not connected, 0 = self -- no edge in either case
 					g->add_edge(text_info.city[i], text_info.city[j], std::stoi(text_info.edge[j]));//stoi because weight is an int, unfortunately the functional bit makes it so I cant deference it
@@ -124,3 +129,5 @@ int main(int argc, char* argv[])
 
 	return 0;
 }
+
+#endif //NO_OF_CITIES
