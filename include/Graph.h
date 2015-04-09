@@ -25,6 +25,9 @@ struct Vertex
 
 	bool have_visited;
 	int district;
+	int distance;
+
+	Vertex* previous;
 
 	std::string name;
 	std::vector<Edge*> edge;
@@ -38,21 +41,16 @@ public:
 	~Graph();
 
 	//by name
-	void add_edge(std::string&, std::string&, int);	//v1, v2, weight
+	void add_edge(int&, int&, int);	//v1, v2, weight
 	void add_vertex(std::string&);	//name
 	void print_vertices();
 	void display_edges(Vertex*);
 	void BFTraversal();
 	void BFTraversal(std::string&);
-	void shortest_path(std::string&, std::string&);
-	void shortest_distance(std::string&, std::string&);	//return T, distnace?
+	void shortest_path(std::string&, std::string&);		//
+	void shortest_distance(std::string&, std::string&);	//return destination-Vertex?  || dijkastra's
 	void assign_districts();
 
-	//from-vertex functions
-	void add_edge(Vertex*, Vertex*, int);
-	void add_vertex(Vertex*);
-	void BFTraversal(Vertex*);
-	void shortest_distance(Vertex*, Vertex*);			//return T, distnace?
 
 	//"EEEEEEZ MONEY" - Bizzaro Flame
 	void road_trip();	//extra credit search. Probably requires a lot of initial setup to reconnect the vertices after zoombies
