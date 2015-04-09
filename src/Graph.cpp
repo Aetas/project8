@@ -75,7 +75,7 @@ Graph::~Graph()
 
 void Graph::add_edge(int& key_o, int& key_d, int weight)
 {
-	Edge* new_edge = new Edge(vertices[key_o], weight);	//make the edge
+	Edge* new_edge = new Edge(vertices[key_d], weight);	//make the edge
 	vertices[key_o]->edge.push_back(new_edge);			//add to vector
 }
 
@@ -137,11 +137,12 @@ void Graph::BFTraversal(std::string& startingCity)
 {
 	Vertex* current = nullptr;
 	int j = 0;
+	std::vector<Vertex*>::iterator jt = vertices.begin();
 	while (current == nullptr)
 	{
-		if (vertices[*j]->name == startingCity)
-			current = vertices[*j];
-		j++;
+		if ((*jt)->name == startingCity)
+			current = *jt;
+		jt++;
 	}
 	std::queue<Vertex*> q;
 
@@ -225,7 +226,6 @@ void Graph::shortest_distance(std::string& o, std::string& d)
 		solved.push_back(min);  	//add to solved
 	}
 	//PRINT path()?
-	//
 }
 
 void Graph::reset_visited()
@@ -236,17 +236,30 @@ void Graph::reset_visited()
 
 void Graph::assign_districts()
 {
-	int district_no = 1;
+	int district_no = 0;	//start at 0 because it incriments it before starting a new district so that I can start in the loop
+
+	std::queue<Vertex*> q;
+	Vertex* current = nullptr;
+
 	for (std::vector<Vertex*>::iterator it = vertices.begin(); it != vertices.end(); it++)
 	{
-		if ((*it)->district < 0)
-		{
-			(*it)->district = district_no;
-			for (std::vector<Edge*>::iterator jt = (*it)->edge.begin(); jt != (*it)->edge.end(); jt++)
-				(*jt)->v->district = district_no;
+		if ((*it)->district < 1)
+		{	
 			district_no++;
+			(*it)->district = district_no;	// = ++district_no?
+			q.push(*it);
+		}
+
+		while (!q.empty())
+		{
+			current = q.front();	//set to oldest
+			current->district = district_no;
+			q.pop();				//remove the oldest to update queue
+			for (std::vector<Edge*>::iterator jt = (*it)->edge.begin(); jt != (*it)->edge.end(); jt++)
+				q.push((*jt)->v);	//push all edges into the queue
 		}
 	}
+
 }
 //****************//
 //---END GRAPH--- //

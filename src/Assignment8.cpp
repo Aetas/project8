@@ -45,7 +45,7 @@ int main(int argc, char* argv[])
 		struct Text_info
 		{ std::string city[NO_OF_CITIES]; std::string edge_weight[NO_OF_CITIES][NO_OF_CITIES]; } text_info;
 
-		while (!in_file.eof())
+		do
 		{
 			in_file.ignore(1000, '\n');						//ignore top line of all the names
 			for (int i = 0; i < NO_OF_CITIES; i++)
@@ -58,7 +58,8 @@ int main(int argc, char* argv[])
 				}
 				getline(in_file, text_info.edge_weight[i][NO_OF_CITIES-1]);	//grab last weight that is delim. by \n
 			}
-		}
+			in_file.ignore(256);	//set eof bit so there are no longer 30 sets
+		} while (!in_file.eof());
 		//Connect vertices w/ edges
 		for (int i = 0; i < NO_OF_CITIES; i++)
 			for (int j = 0; j < NO_OF_CITIES; j++)	//go through the edges
