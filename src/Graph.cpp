@@ -6,6 +6,9 @@
 #include<queue>
 #include"../include/Graph.h"
 
+#ifndef MAX_INT
+#define MAX_INT 999999
+
 //****************//
 //---EDGE---	  //
 //****************//
@@ -89,10 +92,10 @@ void Graph::print_vertices()
 {
 	for (std::vector<Vertex*>::iterator it = vertices.begin(); it != vertices.end(); it++)
 	{
-		std::cout << (*it)->district << ":" << (*it)->name << "->";
+		std::cout << (*it)->district << ":" << (*it)->name << "-->";
 		display_edges(*it);	//optional, functional implementation
+		std::cout << std::endl;
 	}
-	std::cout << std::endl;
 }
 
 void Graph::display_edges(Vertex* home)
@@ -102,7 +105,7 @@ void Graph::display_edges(Vertex* home)
 		std::cout << home->edge[0]->v->name;	//cout the first name always
 		if (home->edge.size() > 1)				//if there is another/more edges, print them in the format.
 			for (std::vector<Edge*>::iterator jt = home->edge.begin()+1; jt != home->edge.end(); jt++)	//do all of them.
-				std::cout << "**" << (*jt)->v->name;
+				std::cout << "***" << (*jt)->v->name;
 	}
 }
 
@@ -173,21 +176,36 @@ Vertex* Graph::shortest_path(std::string& o, std::string& d)
 	Vertex* fin = nullptr;
 
 	std::vector<Vertex*>::iterator ft = vertices.begin();
-	while ((current == nullptr && fin == nullptr) || ft != vertices.end())	//finds the vertices associated with the names
+	while ((current == nullptr || fin == nullptr))	//finds the vertices associated with the names
 	{
 		if ((*ft)->name == o)
 			current = *ft;
 		if ((*ft)->name == d)
 			fin = *ft;
 		ft++;
+		if (ft == vertices.end())
+			break;
 	}
 
-	if (current->district != fin->district)	//they cannot be reached if they are not connected
+	if (current == nullptr || fin == nullptr)
+	{
+		std::cout << "One or more cities doesn\'t exist" << std::endl; 
 		return nullptr;
+	}
+	if (current->district == -1)
+	{
+		std::cout << "Please identify the districts before checking distances" << std::endl;
+		return nullptr;
+	}
+	if (current->district != fin->district)	//they cannot be reached if they are not connected
+	{
+		std::cout << "No safe path between cities" << std::endl;
+		return nullptr;
+	}
 
 	//ensure defaults
 	for (std::vector<Vertex*>::iterator it = vertices.begin(); it != vertices.end(); it++)
-		(*it)->distance = INT_MAX, (*it)->previous = nullptr;
+		(*it)->distance = MAX_INT, (*it)->previous = nullptr;
 
 	std::queue<Vertex*> path;
 	std::queue<Vertex*> q;
@@ -225,25 +243,39 @@ Vertex* Graph::shortest_distance(std::string& o, std::string& d)
 	Vertex* fin = nullptr;
 
 	std::vector<Vertex*>::iterator ft = vertices.begin();
-	while ((temp == nullptr && fin == nullptr) || ft != vertices.end())	//finds the vertices associated with the names
+	while ((temp == nullptr || fin == nullptr))	//finds the vertices associated with the names
 	{
 		if ((*ft)->name == o)
 			temp = *ft;
 		if ((*ft)->name == d)
 			fin = *ft;
 		ft++;
+		if (ft == vertices.end())
+			break;
 	}
-
-	if (temp->district != fin->district)	//they cannot be reached if they are not connected
+	if (temp == nullptr || fin == nullptr)
+	{
+		std::cout << "One or more cities doesn\'t exist" << std::endl;
 		return nullptr;
+	}
+	if (temp->district == -1)
+	{
+		std::cout << "Please identify the districts before checking distances" << std::endl;
+		return nullptr;
+	}
+	if (temp->district != fin->district)	//they cannot be reached if they are not connected
+	{
+		std::cout << "No safe path between cities" << std::endl;
+		return nullptr;
+	}
 	
 	Vertex* min = nullptr;
-	int min_dist = INT_MAX;
+	int min_dist = MAX_INT;
 	std::vector<Vertex*> solved;
 
 	//set all distances to max, all previous to null
 	for (std::vector<Vertex*>::iterator it = vertices.begin(); it != vertices.end(); it++)
-		(*it)->distance = INT_MAX, (*it)->previous = nullptr;
+		(*it)->distance = MAX_INT, (*it)->previous = nullptr;
 
 	//set unique start properties
 	temp->previous = nullptr;
@@ -253,7 +285,7 @@ Vertex* Graph::shortest_distance(std::string& o, std::string& d)
 
 	while (fin->have_visited == false)
 	{
-		min_dist = INT_MAX;	//to next city from previous min
+		min_dist = MAX_INT;	//to next city from previous min
 		min = nullptr;
 
 		for (std::vector<Vertex*>::iterator it = solved.begin(); it != solved.end(); it++)	//each vertex in solved
@@ -323,3 +355,5 @@ void Graph::assign_districts()
 //****************//
 //---END GRAPH--- //
 //****************//
+
+#endif	//MAX_INT

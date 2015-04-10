@@ -71,7 +71,9 @@ int main(int argc, char* argv[])
 
 	while (select != 6)
 	{
-		cout << "1. Print Verticies" << endl
+
+		cout << "======Main Menu=====" << endl
+			<< "1. Print vertices" << endl
 			<< "2. Find districts" << endl
 			<< "3. Find shortest path" << endl
 			<< "4. Find shortest distance" << endl
@@ -90,16 +92,14 @@ int main(int argc, char* argv[])
 			std::string origin = "";
 			std::string destination = "";
 
-			cout << "Starting City?" << endl;
+			cout << "Enter a starting city:" << endl;
 			cin.ignore(1000, '\n');
 			getline(cin, origin);
-			cout << "Ending city?" << endl;
+			cout << "Enter an ending city:" << endl;
 			getline(cin, destination);
 
 			Vertex* ans = g->shortest_path(origin, destination);
-			if (ans == nullptr)
-				cout << "No safe path between cities" << endl;
-			else
+			if (ans != nullptr)
 			{
 				cout << ans->distance;
 				std::vector<Vertex*> read;
@@ -110,7 +110,7 @@ int main(int argc, char* argv[])
 				}
 				while (!read.empty())
 				{
-					cout << ", " << read.back()->name;
+					cout << "," << read.back()->name;
 					read.pop_back();
 				}
 				cout << endl;
@@ -122,15 +122,13 @@ int main(int argc, char* argv[])
 			std::string origin = "";
 			std::string destination = "";
 
-			cout << "Starting City?" << endl;
+			cout << "Enter a starting city:" << endl;
 			cin.ignore(1000, '\n');
 			getline(cin, origin);
-			cout << "Ending city?" << endl;
+			cout << "Enter an ending city:" << endl;
 			getline(cin, destination);
 			Vertex* ans = g->shortest_distance(origin, destination);
-			if (ans == nullptr)
-				cout << "No safe path between cities" << endl;
-			else
+			if (ans != nullptr)
 			{
 				cout << ans->distance;
 				std::vector<Vertex*> read;
@@ -141,11 +139,12 @@ int main(int argc, char* argv[])
 				}
 				while (!read.empty())
 				{
-					cout << ", " << read.back()->name;
+					cout << "," << read.back()->name;
 					read.pop_back();
 				}
 				cout << endl;
 			}
+			//else //nothign
 			
 		}
 		if (select == 5)	//Extra Credit
