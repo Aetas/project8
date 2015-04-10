@@ -101,7 +101,7 @@ void Graph::display_edges(Vertex* home)
 	{
 		std::cout << home->edge[0]->v->name;	//cout the first name always
 		if (home->edge.size() > 1)				//if there is another/more edges, print them in the format.
-			for (std::vector<Edge*>::iterator jt = home->edge.begin(); jt != home->edge.end(); jt++)	//do all of them.
+			for (std::vector<Edge*>::iterator jt = home->edge.begin()+1; jt != home->edge.end(); jt++)	//do all of them.
 				std::cout << "**" << (*jt)->v->name;
 	}
 }
@@ -154,84 +154,136 @@ void Graph::BFTraversal(std::string& startingCity)
 	{
 		current = q.front();	//set to oldest
 		q.pop();	//remove the oldest to update queue
-		for (unsigned int i = 0; i < current->edge.size(); i++)
+		for (std::vector<Edge*>::iterator it = current->edge.begin(); it != current->edge.end(); it++)
 		{
-			if (current->edge[i]->v->have_visited == false)
+			if ((*it)->v->have_visited == false)
 			{
-				current->edge[i]->v->have_visited = true;
-				std::cout << current->edge[i]->v->name << std::endl;
-				q.push(current->edge[i]->v);
+				(*it)->v->have_visited = true;
+				std::cout << (*it)->v->name << std::endl;
+				q.push((*it)->v);
 			}
 		}
 	}
 	reset_visited();
 }
 
-void Graph::shortest_distance(std::string& o, std::string& d)
+Vertex* Graph::shortest_path(std::string& o, std::string& d)
 {
-	//Dijakstra's Algorithm
 	Vertex* current = nullptr;
 	Vertex* fin = nullptr;
 
-	int f = 0;
-	while (current == nullptr || fin == nullptr)	//finds the vertices associated with the names
+	std::vector<Vertex*>::iterator ft = vertices.begin();
+	while ((current == nullptr && fin == nullptr) || ft != vertices.end())	//finds the vertices associated with the names
 	{
-		if (vertices[f]->name == o)
-			current = vertices[f];
-		if (vertices[f]->name == d)
-			fin = vertices[f];
-		f++;
+		if ((*ft)->name == o)
+			current = *ft;
+		if ((*ft)->name == d)
+			fin = *ft;
+		ft++;
 	}
+
+	if (current->district != fin->district)	//they cannot be reached if they are not connected
+		return nullptr;
+
+	//ensure defaults
+	for (std::vector<Vertex*>::iterator it = vertices.begin(); it != vertices.end(); it++)
+		(*it)->distance = INT_MAX, (*it)->previous = nullptr;
+
+	std::queue<Vertex*> path;
+	std::queue<Vertex*> q;
+
+	current->have_visited = true;	//initial
+	current->distance = 0;			//no edges.
+	q.push(current);
+	path.push(current);	//path starts 
+
+	while (!q.empty())
+	{
+		current = q.front();	//set to oldest
+		q.pop();				//remove the oldest to update queue
+		for (std::vector<Edge*>::iterator it = current->edge.begin(); it != current->edge.end(); it++)
+		{
+			if ((*it)->v->have_visited == false)
+			{
+				//(*it)->v->have_visited = true;
+				(*it)->v->distance = current->distance + 1;
+				(*it)->v->previous = current;
+				q.push((*it)->v);
+			}
+		}
+		current->have_visited = true;
+	}
+	reset_visited();
+
+	return fin;
+}
+
+Vertex* Graph::shortest_distance(std::string& o, std::string& d)
+{
+	//Dijakstra's Algorithm
+	Vertex* temp = nullptr;
+	Vertex* fin = nullptr;
+
+	std::vector<Vertex*>::iterator ft = vertices.begin();
+	while ((temp == nullptr && fin == nullptr) || ft != vertices.end())	//finds the vertices associated with the names
+	{
+		if ((*ft)->name == o)
+			temp = *ft;
+		if ((*ft)->name == d)
+			fin = *ft;
+		ft++;
+	}
+
+	if (temp->district != fin->district)	//they cannot be reached if they are not connected
+		return nullptr;
 	
 	Vertex* min = nullptr;
 	int min_dist = INT_MAX;
 	std::vector<Vertex*> solved;
 
-	//set all distances to max
-	for (unsigned int i = 0; i < vertices.size(); i++)
-		vertices[i]->distance = INT_MAX;
+	//set all distances to max, all previous to null
+	for (std::vector<Vertex*>::iterator it = vertices.begin(); it != vertices.end(); it++)
+		(*it)->distance = INT_MAX, (*it)->previous = nullptr;
 
 	//set unique start properties
-	current->previous = nullptr;
-	current->distance = 0;
-	solved.push_back(current);
-		
-	//while final has not been visited
+	temp->previous = nullptr;
+	temp->distance = 0;
+	temp->have_visited = true;
+	solved.push_back(temp);
+
 	while (fin->have_visited == false)
 	{
-		//current->have_visited = true;
-		min_dist = INT_MAX;
+		min_dist = INT_MAX;	//to next city from previous min
 		min = nullptr;
 
-		for (std::vector<Vertex*>::iterator it = solved.begin(); it != solved.end(); it++)
+		for (std::vector<Vertex*>::iterator it = solved.begin(); it != solved.end(); it++)	//each vertex in solved
 		{
-			//current = *it;
-			for (std::vector<Edge*>::iterator jt = (*it)->edge.begin(); jt != (*it)->edge.end(); jt++)
+			for (std::vector<Edge*>::iterator jt = (*it)->edge.begin(); jt != (*it)->edge.end(); jt++)	//each edge of that vertex (from solved)
 			{
-				if ((*jt)->v->have_visited == false)
+				if ((*jt)->v->have_visited == false)	//never visited, setup
 				{
-					(*jt)->v->distance = current->distance + (*jt)->weight;
-					if ((*jt)->v->distance >((*jt)->weight + current->distance))
-						(*jt)->v->distance = ((*jt)->weight + current->distance);
+					(*jt)->v->distance = (*it)->distance + (*jt)->weight;
 					if ((*jt)->v->distance < min_dist)
 					{
 						min_dist = (*jt)->v->distance;
 						min = (*jt)->v;
+						temp = *it;
 					}
 				}
 			}
 		}
-		min->previous = current;    //set prev.
-		current = min;              //move on to next
-		solved.push_back(min);  	//add to solved
+		min->have_visited = true;
+		solved.push_back(min);
+		min->previous = temp;		//have to assign this after the best case/true min has been found.
 	}
-	//PRINT path()?
+	reset_visited();
+	return fin;
 }
 
 void Graph::reset_visited()
 {
-	for (unsigned int i = 0; i < vertices.size(); i++)
-		vertices[i]->have_visited = false;
+	for (std::vector<Vertex*>::iterator it = vertices.begin(); it != vertices.end(); it++)
+		(*it)->have_visited = false;
 }
 
 void Graph::assign_districts()
@@ -243,20 +295,27 @@ void Graph::assign_districts()
 
 	for (std::vector<Vertex*>::iterator it = vertices.begin(); it != vertices.end(); it++)
 	{
-		if ((*it)->district < 1)
+		if ((*it)->district < 0)
 		{	
 			district_no++;
-			(*it)->district = district_no;	// = ++district_no?
+			(*it)->district = district_no;	// = ++district_no; (?)
 			q.push(*it);
 		}
 
-		while (!q.empty())
+		while (!q.empty())	//this serves to assign the same district no. to every edge in the queue
 		{
 			current = q.front();	//set to oldest
 			current->district = district_no;
+			for (std::vector<Edge*>::iterator jt = current->edge.begin(); jt != current->edge.end(); jt++)
+			{
+				if ((*jt)->v->district < 0)
+				{
+					//(*jt)->v->district = district_no;
+					//add a push cycle here? the one below may be excessive
+					q.push((*jt)->v);
+				}
+			}
 			q.pop();				//remove the oldest to update queue
-			for (std::vector<Edge*>::iterator jt = (*it)->edge.begin(); jt != (*it)->edge.end(); jt++)
-				q.push((*jt)->v);	//push all edges into the queue
 		}
 	}
 
