@@ -6,30 +6,30 @@ CPPFLAGS = -Wall -Werror -std=c++0x I
 OBJ = main.o functions.o
 OUTPUT = main.o
 ODIR = ./bin
-PROJ_DIR = $(HOME)/home/aetas/gitrepos/project_7/project7
+PROJ_DIR = $(HOME)/home/aetas/gitrepos/project_8/project8
 
 vpath = %.h  $(PROJ_DIR)/include
 vpath = %.cpp $(PROJ_DIR)/src
 
-JSON_C_DIR=/usr/lib64
-CPPFLAGS += -I$(JSON_C_DIR)/include/json-c
-LDFLAGS+= -L$(JSON_C_DIR)/lib -ljson-c
+#JSON_C_DIR=/usr/lib64
+#CPPFLAGS += -I$(JSON_C_DIR)/include/json-c
+#LDFLAGS+= -L$(JSON_C_DIR)/lib -ljson-c
 
 program: $(OBJ)
-	$(CC) $(CPPFLAGS) $(OBJ) -o $(ODIR)/$(OUTPUT) $(LDFLAGS)
+	$(CC) $(OBJ) -o $(ODIR)/$(OUTPUT) $(LDFLAGS)
 
-main.o : ./src/Assignment7.cpp ./include/MovieTree.h
-	$(CC) $(CPPFLAGS) -c $(LDFLAGS)
+main.o : ./src/Assignment8.cpp ./include/Graph.h
+	$(CC) -c
 
 functions.o : ./src/MovieTree.cpp ./include/MovieTree.h
-	$(CC) $(CPPFLAGS) -c $(LDFLAGS)
+	$(CC) -c
 
 .PHONY : clean
 clean :
 	rm program $(OBJ)
 
 # Creates a log to keep track of things changed
-log : Assignment7.cpp $(OBJ)
+log : Assignment8.cpp $(OBJ)
 	lpt -p $?
 	touch log
 
