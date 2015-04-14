@@ -21,7 +21,7 @@ program: $(OBJ)
 main.o : ./src/Assignment8.cpp ./include/Graph.h
 	$(CC) -c
 
-functions.o : ./src/MovieTree.cpp ./include/MovieTree.h
+functions.o : ./src/Graph.cpp ./include/Graph.h
 	$(CC) -c
 
 .PHONY : clean
